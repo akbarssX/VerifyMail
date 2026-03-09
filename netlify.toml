@@ -3,7 +3,9 @@
   functions = "functions"
   publish = "public"
 
-# This redirects frontend /api calls to your serverless backend
+[functions]
+  external_node_modules = ["sqlite3"]
+
 [[redirects]]
   from = "/api/*"
   to = "/.netlify/functions/server/api/:splat"

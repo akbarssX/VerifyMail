@@ -1,37 +1,37 @@
-const sqlite3 = require('sqlite3').verbose();
-const path = require('path');
-const os = require('os');
+const store = new Map();
 
-// Netlify's read-only environment requires writing SQLite to the temporary directory
-const isNetlify = process.env.NETLIFY === 'true' || process.env.CONTEXT;
-
-const dbPath = isNetlify 
-    ? path.join(os.tmpdir(), 'verifications.db') 
-    : path.join(__dirname, 'verifications.db');
-
-// Initialize Database
-const db = new sqlite3.Database(dbPath, (err) => {
-    if (err) {
-        console.error('Database opening error: ', err);
-    } else {
-        console.log(`Connected to SQLite database at: ${dbPath}`);
-    }
-});
-
-// Create the required table if it doesn't exist
-db.serialize(() => {
-    db.run(`CREATE TABLE IF NOT EXISTS verifications (
-        email TEXT PRIMARY KEY,
-        otp TEXT,
-        created_at INTEGER,
-        expires_at INTEGER,
-        attempt_count INTEGER DEFAULT 0,
-        is_verified BOOLEAN DEFAULT 0
-    )`, (err) => {
-        if (err) {
-            console.error('Error creating table: ', err);
+const db = {
+    run: function(query, params, callback) {
+        // Handle INSERT / UPDATE (Send OTP)
+        if (query.includes("INSERT INTO verifications")) {
+            const [email, otp, created_at, expires_at] = params;
+            store.set(email, { email, otp, created_at, expires_at, attempt_count: 0, is_verified: 0 });
+            if (callback) callback(null);
         }
-    });
-});
+        // Handle UPDATE attempt_count (Wrong OTP)
+        else if (query.includes("SET attempt_count")) {
+            const [email] = params;
+            const record = store.get(email);
+            if (record) record.attempt_count += 1;
+            if (callback) callback(null);
+        }
+        // Handle UPDATE is_verified (Success)
+        else if (query.includes("SET is_verified")) {
+            const [email] = params;
+            const record = store.get(email);
+            if (record) record.is_verified = 1;
+            if (callback) callback(null);
+        }
+    },
+    
+    get: function(query, params, callback) {
+        // Handle SELECT queries
+        const [email] = params;
+        const record = store.get(email);
+        if (callback) callback(null, record || null);
+    }
+};
+
+console.log("Using Serverless-Safe In-Memory Database");
 
 module.exports = db;
