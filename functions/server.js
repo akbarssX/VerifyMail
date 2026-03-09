@@ -1,10 +1,15 @@
-[build]
-  command = "npm install"
-  functions = "functions"
-  publish = "public"
+const serverless = require('serverless-http');
+const express = require('express');
+const cors = require('cors');
+const apiRoutes = require('../routes/api');
 
-# This redirects frontend /api calls to your serverless backend
-[[redirects]]
-  from = "/api/*"
-  to = "/.netlify/functions/server/api/:splat"
-  status = 200
+const app = express();
+
+app.use(cors());
+app.use(express.json());
+
+// Set up API routes
+app.use('/api', apiRoutes);
+
+// Export for Netlify
+module.exports.handler = serverless(app);
