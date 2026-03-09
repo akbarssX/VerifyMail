@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Futuristic OTP Verification</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="glass-panel" id="mainPanel">
+            <div class="glow-ring"></div>
+            
+            <form id="emailForm" class="active-form">
+                <h2>Initialize Identity</h2>
+                <p>Enter your email to receive a secure transmission.</p>
+                <div class="input-group">
+                    <input type="email" id="emailInput" placeholder="agent@network.com" required>
+                </div>
+                <button type="submit" class="neon-btn">Send OTP Code</button>
+                <div class="message" id="emailMsg"></div>
+            </form>
+
+            <form id="otpForm" class="hidden-form">
+                <h2>Verify Clearance</h2>
+                <p>Enter the 6-digit code sent to <br><span id="displayEmail" class="highlight"></span></p>
+                <div class="input-group">
+                    <input type="text" id="otpInput" maxlength="6" placeholder="• • • • • •" required autocomplete="off">
+                </div>
+                <button type="submit" class="neon-btn btn-magenta">Verify System</button>
+                <button type="button" id="backBtn" class="text-btn">← Back</button>
+                <div class="message" id="otpMsg"></div>
+            </form>
+        </div>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>

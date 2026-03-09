@@ -1,0 +1,15 @@
+project-root/
+├── package.json
+├── .env.example
+├── server.js
+├── database.js
+├── routes/
+│   └── api.js
+├── controllers/
+│   └── authController.js
+├── services/
+│   └── emailService.js
+└── public/
+    ├── index.html
+    ├── style.css
+    └── app.js
