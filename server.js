@@ -1,18 +1,16 @@
-require('dotenv').config();
+const serverless = require('serverless-http');
 const express = require('express');
 const cors = require('cors');
-const path = require('path');
-const apiRoutes = require('./routes/api');
+// Make sure the path to api.js is correct based on your folder structure
+const apiRoutes = require('../routes/api'); 
 
 const app = express();
-const PORT = process.env.PORT || 3000;
 
 app.use(cors());
 app.use(express.json());
-app.use(express.static(path.join(__dirname, 'public'))); // Serve Frontend
 
+// Set up your API routes
 app.use('/api', apiRoutes);
 
-app.listen(PORT, () => {
-    console.log(`Server running on http://localhost:${PORT}`);
-});
+// EXPORT FOR NETLIFY (Notice there is no app.listen here)
+module.exports.handler = serverless(app);
